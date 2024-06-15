@@ -1,0 +1,47 @@
+{
+  "url": "https://uitesting2024.lovestoblog.com/wp-admin/",
+  "actions": [
+    {
+      "type": "input",
+      "locator": "username",
+      "value": "uitesting2024"
+
+    },
+    {
+      "type": "input",
+      "locator": "password",
+      "value": "uitesting2024"
+
+    },
+    {
+      "type": "click",
+      "locator": "login_button"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "http://shoppingdemo2.test/wp-admin/"
+    },
+    {
+      "type": "hover",
+      "locator": "settings 2"
+    },
+    {
+      "type": "click",
+      "locator": "reading"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "http://shoppingdemo2.test/wp-admin/"
+    },
+    {
+      "type": "select",
+      "question": "Homepage",
+      "choice": "Home"
+    },
+    {
+      "type": "select",
+      "question": "Posts page",
+      "choice": "Home"
+    }
+  ]
+}

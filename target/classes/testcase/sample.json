@@ -1,0 +1,57 @@
+{
+    "url": "https://webtest.ranorex.org/wp-login.php",
+    "actions": [
+        {
+            "type": "input",
+            "locator": "username",
+            "value": "ranorex webtest"
+        },
+        {
+            "type": "input",
+            "locator": "password",
+            "value": "ranorex"
+
+        },
+        {
+            "type": "click",
+            "locator": "login_button"           
+        },
+        {
+            "type": "assertUrl",
+            "expectedUrl": "https://webtest.ranorex.org/wp-admin/"
+        },
+        {
+            "type": "click",
+            "locator": "Screen Options"
+        },
+        {
+            "type": "checkbox",
+            "choice": "Activity"
+        },
+        {
+            "type": "click",
+            "locator": "Screen Options"
+        },
+        {
+            "type": "click",
+            "locator": "Posts"
+        },
+        {
+            "type": "assertUrl",
+            "expectedUrl": "https://webtest.ranorex.org/wp-admin/edit.php"
+        },
+        {
+            "type": "hover",
+            "locator": "hello"
+        },
+        {
+            "type": "click",
+            "locator": "Edit"
+        },
+        {
+            "type": "select",
+            "question": "",
+            "choice": "Edit"
+        }
+    ]
+  }

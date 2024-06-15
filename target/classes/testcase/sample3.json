@@ -1,0 +1,15 @@
+{
+  "url": "https://form.jotform.com/233591551157458",
+  "actions": [
+    {
+      "type": "select",
+      "question": "Departing from",
+      "choice": "Albania"
+    },
+    {
+      "type": "input",
+      "locator": "City In Departing from",
+      "value": "Bac Ninh"
+    }
+  ]
+}

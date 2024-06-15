@@ -1,0 +1,65 @@
+{
+  "url": "https://uitesting2024.lovestoblog.com/wp-admin/",
+  "actions": [
+    {
+      "type": "input",
+      "locator": "username",
+      "value": "uitesting2024"
+
+    },
+    {
+      "type": "input",
+      "locator": "password",
+      "value": "uitesting2024"
+
+    },
+    {
+      "type": "click",
+      "locator": "login_button"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "http://shoppingdemo2.test/wp-admin/"
+    },
+    {
+      "type": "click",
+      "locator": "posts"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "http://shoppingdemo2.test/wp-admin/edit.php"
+    },
+    {
+      "type": "hover",
+      "locator": "test"
+    },
+    {
+      "type": "click",
+      "locator": "Quick Edit"
+    },
+    {
+      "type": "input",
+      "locator": "title",
+      "value": "test"
+    },
+    {
+      "type": "input",
+      "locator": "tags",
+      "value": "abc"
+    },
+
+    {
+      "type": "select",
+      "question": "",
+      "choice": "Published"
+    },
+    {
+      "type": "checkbox",
+      "choice": "story"
+    },
+    {
+      "type": "click",
+      "locator": "update"
+    }
+  ]
+}

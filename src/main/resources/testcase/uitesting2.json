@@ -1,0 +1,40 @@
+{
+  "url": "https://uitesting2024.lovestoblog.com/wp-admin/",
+  "actions": [
+    {
+      "type": "input",
+      "locator": "Username or Email Address",
+      "value": "uitesting2024"
+    },
+    {
+      "type": "input",
+      "locator": "password",
+      "value": "uitesting2024"
+
+    },
+    {
+      "type": "click",
+      "locator": "log in"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "https://uitesting2024.lovestoblog.com/wp-admin/"
+    },
+    {
+      "type": "hover",
+      "locator": "Howdy uitesting2024"
+    },
+    {
+      "type": "click",
+      "locator": "Edit Profile"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "https://uitesting2024.lovestoblog.com/wp-admin/"
+    },
+    {
+      "type": "checkbox",
+      "locator": "Disable the visual editor when writing"
+    }
+  ]
+}
