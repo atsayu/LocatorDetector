@@ -450,6 +450,60 @@ public class Process {
         return null;
     }
 
+    public static String detectElement(String pageSource, String description, String actionType, boolean isAfterHoverAction, Element previousElement, List<Action> visitedActions, String url) {
+        Document document = getDomTree(pageSource);
+        String locator = "";
+        switch (actionType) {
+            case "Input":
+                break;
+            case "Click":
+                Elements clickableElements = HandleClick.getClickableElements(document);
+                List<String> input = Arrays.asList(description);
+                Map<String, List<Element>> map = Click.detectClickElement(input, clickableElements, isAfterHoverAction);
+                List<Element> potentialElements = map.get(description);
+                List<Element> isDisplayPotentialElements = new ArrayList<>();
+                WebDriver driver = new ChromeDriver();
+                driver.get(url);
+                Action.runActions(visitedActions, driver);
+                for (Element e : potentialElements) {
+                    String xpath = Process.getAbsoluteXpath(e, "");
+                    Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                    wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+                    if (driver.findElement(By.xpath(xpath)).isDisplayed()) {
+                        isDisplayPotentialElements.add(e);
+                    }
+                }
+                driver.quit();
+                if (isDisplayPotentialElements.size() == 1) {
+                    Element e = isDisplayPotentialElements.get(0);
+//                        String locator = Process.getXpath(e);
+                    locator = Process.getAbsoluteXpath(e, "");
+                } else {
+                    if (previousElement != null) {
+                        Element e = HandleElement.findNearestElementWithSpecifiedElement(previousElement, isDisplayPotentialElements);
+                        locator = Process.getAbsoluteXpath(e, "");
+                    } else {
+                        Element e = HandleElement.findNearestElementWithSpecifiedElement(document.body(), isDisplayPotentialElements);
+                        locator = Process.getAbsoluteXpath(e, "");
+                    }
+                }
+
+                break;
+            case "Hover":
+                break;
+            case "Select":
+                break;
+            case "Checkbox":
+                break;
+            default:
+
+
+        }
+
+        return locator;
+
+    }
+
     public static void main(String[] args) {
         Pair<String, List<Action>> res = parseJson("src/main/resources/testcase/sample_saucedemo.json");
         String url = res.getFirst();
