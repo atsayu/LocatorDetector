@@ -20,6 +20,13 @@ public class InputAction extends Action {
         this.dom_locator = "";
     }
 
+    public InputAction(String value, String text_locator, String dom_locator) {
+        this.value = value;
+        this.text_locator = text_locator;
+        this.dom_locator = dom_locator;
+    }
+
+
     public String getValue() {
         return value;
     }

@@ -17,6 +17,10 @@ public class ClickAction extends Action {
         this.dom_locator = "";
     }
 
+    public ClickAction(String text_locator, String dom_locator) {
+        this.text_locator = text_locator;
+        this.dom_locator = dom_locator;
+    }
     public String getText_locator() {
         return text_locator;
     }
