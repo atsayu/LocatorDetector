@@ -450,9 +450,9 @@ public class Process {
         return null;
     }
 
-    public static String detectElement(String pageSource, String description, String actionType, boolean isAfterHoverAction, Element previousElement, List<Action> visitedActions, String url) {
+    public static Element detectElement(String pageSource, String description, String actionType, boolean isAfterHoverAction, Element previousElement, List<Action> visitedActions, String url) {
         Document document = getDomTree(pageSource);
-        String locator = "";
+        Element result = null;
         switch (actionType) {
             case "Input":
                 break;
@@ -475,16 +475,16 @@ public class Process {
                 }
                 driver.quit();
                 if (isDisplayPotentialElements.size() == 1) {
-                    Element e = isDisplayPotentialElements.get(0);
+                    result = isDisplayPotentialElements.get(0);
 //                        String locator = Process.getXpath(e);
-                    locator = Process.getAbsoluteXpath(e, "");
+//                    locator = Process.getAbsoluteXpath(e, "");
                 } else {
                     if (previousElement != null) {
-                        Element e = HandleElement.findNearestElementWithSpecifiedElement(previousElement, isDisplayPotentialElements);
-                        locator = Process.getAbsoluteXpath(e, "");
+                        result = HandleElement.findNearestElementWithSpecifiedElement(previousElement, isDisplayPotentialElements);
+//                        locator = Process.getAbsoluteXpath(e, "");
                     } else {
-                        Element e = HandleElement.findNearestElementWithSpecifiedElement(document.body(), isDisplayPotentialElements);
-                        locator = Process.getAbsoluteXpath(e, "");
+                        result = HandleElement.findNearestElementWithSpecifiedElement(document.body(), isDisplayPotentialElements);
+//                        locator = Process.getAbsoluteXpath(e, "");
                     }
                 }
 
@@ -500,7 +500,7 @@ public class Process {
 
         }
 
-        return locator;
+        return result;
 
     }
 
