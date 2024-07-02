@@ -453,16 +453,46 @@ public class Process {
     public static Element detectElement(String pageSource, String description, String actionType, boolean isAfterHoverAction, Element previousElement, List<Action> visitedActions, String url) {
         Document document = getDomTree(pageSource);
         Element result = null;
+        List<String> input = Arrays.asList(description);
+        Map<String, List<Element>> map = new HashMap<>();
+        List<Element> potentialElements = new ArrayList<>();
+        List<Element> isDisplayPotentialElements = new ArrayList<>();
+        WebDriver driver = new ChromeDriver();
         switch (actionType) {
             case "Input":
+                Elements inputElements = HandleInput.getInputElements(document);
+                map = InputElement.detectInputElement(input, inputElements, isAfterHoverAction);
+                potentialElements = map.get(description);
+                driver.get(url);
+                Action.runActions(visitedActions, driver);
+                for (Element e : potentialElements) {
+                    String xpath = Process.getAbsoluteXpath(e, "");
+                    Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                    wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+                    if (driver.findElement(By.xpath(xpath)).isDisplayed()) {
+                        isDisplayPotentialElements.add(e);
+                    }
+                }
+                driver.quit();
+                if (isDisplayPotentialElements.size() == 1) {
+                    result = isDisplayPotentialElements.get(0);
+//                        String locator = Process.getXpath(e);
+//                    locator = Process.getAbsoluteXpath(e, "");
+                } else {
+                    if (previousElement != null) {
+                        result = HandleElement.findNearestElementWithSpecifiedElement(previousElement, isDisplayPotentialElements);
+//                        locator = Process.getAbsoluteXpath(e, "");
+                    } else {
+                        result = HandleElement.findNearestElementWithSpecifiedElement(document.body(), isDisplayPotentialElements);
+//                        locator = Process.getAbsoluteXpath(e, "");
+                    }
+                }
+
                 break;
             case "Click":
                 Elements clickableElements = HandleClick.getClickableElements(document);
-                List<String> input = Arrays.asList(description);
-                Map<String, List<Element>> map = Click.detectClickElement(input, clickableElements, isAfterHoverAction);
-                List<Element> potentialElements = map.get(description);
-                List<Element> isDisplayPotentialElements = new ArrayList<>();
-                WebDriver driver = new ChromeDriver();
+                map = Click.detectClickElement(input, clickableElements, isAfterHoverAction);
+                potentialElements = map.get(description);
                 driver.get(url);
                 Action.runActions(visitedActions, driver);
                 for (Element e : potentialElements) {
