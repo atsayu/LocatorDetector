@@ -16,7 +16,7 @@ public class Select {
             String choice = pair.getSecond();
             int max_weight = 0;
             double max_full = 0;
-            int current_cmp3 = 2;
+            int current_cmp3 = 0;
             List<String> wordsInQuestion = HandleString.separateWordsInString(question);
             HandleString.lowercaseWordsInList(wordsInQuestion);
             List<String> distinctWordsInQuestion = HandleString.distinctWordsInString(wordsInQuestion);

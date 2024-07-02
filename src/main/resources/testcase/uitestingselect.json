@@ -23,7 +23,7 @@
     },
     {
       "type": "hover",
-      "locator": "settings 2"
+      "locator": "settings"
     },
     {
       "type": "click",

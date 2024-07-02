@@ -78,11 +78,11 @@ public class Checkbox {
             for (Element ele : textAndElement.get(tmp)) {
                 Map<String, Element> mp = HandleCheckbox.searchCheckboxInSubtree(ele, choices);
                 if (mp != null) {
-                   for (String choice : choices) {
-                       Element checkbox = mp.get(choice);
-                       visitedCheckbox.add(checkbox);
-                       res.put(new Pair<>(question, choice), Process.getXpath(checkbox));
-                   }
+                    for (String choice : choices) {
+                        Element checkbox = mp.get(choice);
+                        visitedCheckbox.add(checkbox);
+                        res.put(new Pair<>(question, choice), Process.getXpath(checkbox));
+                    }
                 }
             }
 
@@ -119,7 +119,7 @@ public class Checkbox {
         if (question.isEmpty()) {
             int max_weight = 0;
             double max_full = 0;
-            int current_cmp3 = 2;
+            int current_cmp3 = 0;
             for (Element e : listCheckbox) {
                 String text = HandleCheckbox.getTextForCheckbox(e);
                 if (!text.isEmpty()) {
@@ -139,7 +139,7 @@ public class Checkbox {
         } else {
             int max_weight1 = 0;
             double max_full1 = 0;
-            int current_cmp3_1 = 2;
+            int current_cmp3_1 = 0;
             String tmp_question = "";
             List<String> wordsInQuestion = HandleString.separateWordsInString(question);
             HandleString.lowercaseWordsInList(wordsInQuestion);
@@ -161,7 +161,7 @@ public class Checkbox {
                 List<Element> elements = HandleCheckbox.searchCheckboxInSubtree(e);
                 int max_weight2 = 0;
                 double max_full2 = 0;
-                int current_cmp3_2 = 2;
+                int current_cmp3_2 = 0;
                 for (Element element : elements) {
                     String text = HandleCheckbox.getTextForCheckbox(element);
                     if (!text.isEmpty()) {
