@@ -450,7 +450,12 @@ public class Process {
         return null;
     }
 
+    public static Element detectElementV2(String pageSource, Action currentAction, List<Action> previousAction, WebDriver driver) {
+
+    }
+
     public static Element detectElement(String pageSource, String description, String actionType, boolean isAfterHoverAction, Element previousElement, List<Action> visitedActions, String url) {
+
         Document document = getDomTree(pageSource);
         Element result = null;
         List<String> input = Arrays.asList(description);

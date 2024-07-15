@@ -45,6 +45,8 @@ public class APITest {
         System.out.println(locatorsMap.get("username"));
         driver.findElement(By.xpath(locatorsMap.get("username"))).sendKeys("standard_user");
 
+
+
         mutated = (Boolean) ((JavascriptExecutor) driver).executeScript("return window.mutated;");
         if (mutated) pageSource = driver.getPageSource();
 
