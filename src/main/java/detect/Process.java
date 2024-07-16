@@ -450,7 +450,119 @@ public class Process {
         return null;
     }
 
-    public static Element detectElementV2(String pageSource, Action currentAction, List<Action> previousAction, WebDriver driver) {
+    public static Element detectElementV2(String pageSource, Action currentAction, boolean isAfterHoverAction, Element previousElement, WebDriver driver) {
+
+            Document document = getDomTree(pageSource);
+            Element result = null;
+            if (currentAction instanceof InputAction || currentAction instanceof ClickAction || currentAction instanceof HoverAction) {
+                String text_locator = currentAction.getText_locator();
+                List<String> input = Arrays.asList(text_locator);
+                if (currentAction instanceof InputAction) {
+                    Elements inputElements = HandleInput.getInputElements(document);
+                    Map<String, List<Element>> map = InputElement.detectInputElement(input, inputElements, isAfterHoverAction);
+                    List<Element> potentialElements = map.get(text_locator);
+                    List<Element> isDisplayPotentialElements = new ArrayList<>();
+                    for (Element e : potentialElements) {
+                        String xpath = Process.getAbsoluteXpath(e, "");
+                        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+                        if (driver.findElement(By.xpath(xpath)).isDisplayed()) {
+                            isDisplayPotentialElements.add(e);
+                        }
+                    }
+                    if (isDisplayPotentialElements.size() == 1) {
+                        result = isDisplayPotentialElements.get(0);
+//                        String locator = Process.getXpath(e);
+//                    locator = Process.getAbsoluteXpath(e, "");
+                    } else if (isDisplayPotentialElements.size() > 0) {
+                        if (previousElement != null) {
+                            result = HandleElement.findNearestElementWithSpecifiedElement(previousElement, isDisplayPotentialElements);
+//                        locator = Process.getAbsoluteXpath(e, "");
+                        } else {
+                            result = HandleElement.findNearestElementWithSpecifiedElement(document.body(), isDisplayPotentialElements);
+//                        locator = Process.getAbsoluteXpath(e, "");
+                        }
+                    }
+                }
+
+                if (currentAction instanceof ClickAction) {
+                    Elements clickableElements = HandleClick.getClickableElements(document);
+                    Map<String, List<Element>> map = InputElement.detectInputElement(input, clickableElements, isAfterHoverAction);
+                    List<Element> potentialElements = map.get(text_locator);
+                    List<Element> isDisplayPotentialElements = new ArrayList<>();
+                    for (Element e : potentialElements) {
+                        String xpath = Process.getAbsoluteXpath(e, "");
+                        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+                        if (driver.findElement(By.xpath(xpath)).isDisplayed()) {
+                            isDisplayPotentialElements.add(e);
+                        }
+                    }
+                    if (isDisplayPotentialElements.size() == 1) {
+                        result = isDisplayPotentialElements.get(0);
+//                        String locator = Process.getXpath(e);
+//                    locator = Process.getAbsoluteXpath(e, "");
+                    } else if (isDisplayPotentialElements.size() > 0) {
+                        if (previousElement != null) {
+                            result = HandleElement.findNearestElementWithSpecifiedElement(previousElement, isDisplayPotentialElements);
+//                        locator = Process.getAbsoluteXpath(e, "");
+                        } else {
+                            result = HandleElement.findNearestElementWithSpecifiedElement(document.body(), isDisplayPotentialElements);
+//                        locator = Process.getAbsoluteXpath(e, "");
+                        }
+                    }
+                }
+
+                if (currentAction instanceof HoverAction) {
+                    Elements clickableElements = HandleClick.getClickableElements(document);
+                    Map<String, List<Element>> map = InputElement.detectInputElement(input, clickableElements, isAfterHoverAction);
+                    List<Element> potentialElements = map.get(text_locator);
+                    List<Element> isDisplayPotentialElements = new ArrayList<>();
+                    for (Element e : potentialElements) {
+                        String xpath = Process.getAbsoluteXpath(e, "");
+                        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+                        if (driver.findElement(By.xpath(xpath)).isDisplayed()) {
+                            isDisplayPotentialElements.add(e);
+                        }
+                    }
+                    if (isDisplayPotentialElements.size() == 1) {
+                        result = isDisplayPotentialElements.get(0);
+//                        String locator = Process.getXpath(e);
+//                    locator = Process.getAbsoluteXpath(e, "");
+                    } else if (isDisplayPotentialElements.size() > 0) {
+                        if (previousElement != null) {
+                            result = HandleElement.findNearestElementWithSpecifiedElement(previousElement, isDisplayPotentialElements);
+//                        locator = Process.getAbsoluteXpath(e, "");
+                        } else {
+                            result = HandleElement.findNearestElementWithSpecifiedElement(document.body(), isDisplayPotentialElements);
+//                        locator = Process.getAbsoluteXpath(e, "");
+                        }
+                    }
+                }
+
+            } else {
+                if (currentAction instanceof ClickCheckboxAction) {
+                    ClickCheckboxAction checkboxAction = (ClickCheckboxAction) currentAction;
+                    String choice = checkboxAction.getChoice();
+                    String question = checkboxAction.getQuestion();
+                    Pair<String, String> pairQuestionAndChoice = new Pair(question, choice);
+                    result = Checkbox.detectCheckboxElement(pairQuestionAndChoice, document);
+                }
+
+                if (currentAction instanceof SelectAction) {
+                    Elements selectElements = HandleSelect.getSelectElements(document);
+                    SelectAction selectAction = (SelectAction) currentAction;
+                    String question = selectAction.getQuestion();
+                    String choice = selectAction.getChoice();
+                    Pair<String, String> pairQuestionAndChoice = new Pair<>(question, choice);
+                    List<Pair<String, String>> listPairQuestionAndChoice = new ArrayList<>();
+                    listPairQuestionAndChoice.add(pairQuestionAndChoice);
+                    Map<Pair<String, String>, Element> map = Select.detectSelectElement(listPairQuestionAndChoice, selectElements);
+                    result = map.get(pairQuestionAndChoice);
+                }
+            }
+            return result;
 
     }
 
