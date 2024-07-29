@@ -5,7 +5,6 @@
             "type": "input",
             "locator": "username",
             "value": "standard_user"
-
         },
         {
             "type": "input",

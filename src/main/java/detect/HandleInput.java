@@ -1,9 +1,13 @@
 package detect;
 
+import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class HandleInput {
@@ -74,6 +78,41 @@ public class HandleInput {
         }
         return getTextForInputInSubtree(e.parent());
     }
+
+    public static List<String> describedElement(Element e) {
+        List<String> listDescribeElement = new ArrayList<>();
+        Pair<String, Boolean> pair = getTextForInput(e);
+        String text = pair.getFirst();
+        if (!text.isEmpty() && !pair.getSecond()) {
+            List<String> wordsInText = HandleString.separateWordsInString(text);
+            for (int i = 0; i < wordsInText.size(); i++) {
+                String s = wordsInText.get(i);
+                if (!Setting.STOP_WORDS.contains(s) && !Setting.HEURISTIC_STOP_WORDS.contains(s)) {
+                    listDescribeElement.add(s.toLowerCase());
+                }
+            }
+        }
+        Attributes attributes = e.attributes();
+        if (!attributes.isEmpty()) {
+            for (Attribute attr : attributes) {
+                String typeAttr = attr.getKey();
+                if (!Setting.EXCEPT_ATTRS.contains(typeAttr)) {
+                    String valueOfAttr = attr.getValue();
+                    if (!valueOfAttr.isEmpty()) {
+                        List<String> wordsInValueOfAttr = HandleString.separateWordsInString(valueOfAttr);
+                        for (int i = 0; i < wordsInValueOfAttr.size(); i++) {
+                            String s = wordsInValueOfAttr.get(i);
+                            if (!Setting.STOP_WORDS.contains(s) && !Setting.HEURISTIC_STOP_WORDS.contains(s)) {
+                                listDescribeElement.add(s.toLowerCase());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return listDescribeElement;
+    }
+
 
     public static void main(String[] args) {
         String linkHtml = "https://form.jotform.com/233591551157458";

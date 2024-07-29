@@ -14,7 +14,7 @@
         },
         {
             "type": "click",
-            "locator": "login_button"           
+            "locator": "Sign_in"
         },
         {
             "type": "assertUrl",
@@ -26,6 +26,7 @@
         },
         {
             "type": "checkbox",
+            "question": "",
             "choice": "Activity"
         },
         {
@@ -41,17 +42,9 @@
             "expectedUrl": "https://webtest.ranorex.org/wp-admin/edit.php"
         },
         {
-            "type": "hover",
-            "locator": "hello"
-        },
-        {
-            "type": "click",
-            "locator": "Edit"
-        },
-        {
             "type": "select",
             "question": "",
-            "choice": "Edit"
+            "choice": "July 2024"
         }
     ]
   }
