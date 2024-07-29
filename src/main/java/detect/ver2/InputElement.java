@@ -1,23 +1,20 @@
 package detect.ver2;
-
 import detect.HandleInput;
+import detect.HandleString;
 import detect.Pair;
 import detect.Process;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-
 import java.util.*;
-
-import static detect.ver2.Click.detectClickElement;
+import static detect.word2vec.Word2Vec.convertDataToJsonFormat;
+import static detect.word2vec.Word2Vec.invokePythonProcess;
 
 public class InputElement {
     public static Map<String, List<Element>> detectInputElement(List<String> input, Elements inputElements, boolean isAfterHoverAction) {
         Map<String, List<Element>> result = new HashMap<>();
         Map<Weight, List<Weight>> map = new HashMap<>();
+        String s = input.get(0);
         if (!isAfterHoverAction) {
-            for (String s : input) {
                 Weight max = new Weight();
                 for (int i = 0; i < inputElements.size(); i++) {
                     Element e = inputElements.get(i);
@@ -43,24 +40,39 @@ public class InputElement {
                         }
                     }
                 }
-
                 if (max.e != null && max.getFull() > 0 && max.getWeight() > 0) {
                     System.out.println(s);
                     List<Element> elementList = new ArrayList<>();
                     for (Weight w : map.get(max)) {
                         if (w.e != null) {
                             elementList.add(w.e);
-                            System.out.println( Process.getAbsoluteXpath(w.e, "") + " " + w.text);
                         }
                     }
                     result.put(s, elementList);
                     System.out.println(max.getFull() + " " + max.getWeight());
                 } else {
-                    System.out.println("Cant detect element with input is " + s);
+                    List<String> describedLocator = HandleString.describedLocator(s);
+                    List<List<String>> describedElements = new ArrayList<>();
+                    for (Element element : inputElements) {
+                        List<String> describedElement = HandleInput.describedElement(element);
+                        describedElements.add(describedElement);
+                    }
+                    String jsonString = convertDataToJsonFormat(describedLocator, describedElements);
+                    int size = inputElements.size();
+                    try {
+                        int indexBestMatchElement =invokePythonProcess(jsonString, String.valueOf(size), "E:\\LAB UI\\UITestingLocatorDetector\\src\\main\\java\\detect\\word2vec\\findBestElement.py");
+                        if (indexBestMatchElement != -1) {
+                            List<Element> potentialElements = new ArrayList<>();
+                            potentialElements.add(inputElements.get(indexBestMatchElement));
+                            result.put(s, potentialElements);
+                        } else {
+                            System.out.println("Cant detect element with input is " + s);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Cant detect element with input is " + s);
+                        e.printStackTrace();                    }
                 }
-            }
         } else {
-            for (String s : input) {
                 Weight max = new Weight();
                 for (int i = 0; i < inputElements.size(); i++) {
                     Element e = inputElements.get(i);
@@ -98,11 +110,28 @@ public class InputElement {
                     result.put(s, elementList);
                     System.out.println(max.getFull() + " " + max.getWeight());
                 } else {
-                    System.out.println("Cant detect element with input is " + s);
+                    List<String> describedLocator = HandleString.describedLocator(s);
+                    List<List<String>> describedElements = new ArrayList<>();
+                    for (Element element : inputElements) {
+                        List<String> describedElement = HandleInput.describedElement(element);
+                        describedElements.add(describedElement);
+                    }
+                    String jsonString = convertDataToJsonFormat(describedLocator, describedElements);
+                    int size = inputElements.size();
+                    try {
+                        int indexBestMatchElement =invokePythonProcess(jsonString, String.valueOf(size), "E:\\LAB UI\\UITestingLocatorDetector\\src\\main\\java\\detect\\word2vec\\findBestElement.py");
+                        if (indexBestMatchElement != -1) {
+                            List<Element> potentialElements = new ArrayList<>();
+                            potentialElements.add(inputElements.get(indexBestMatchElement));
+                            result.put(s, potentialElements);
+                        } else {
+                            System.out.println("Cant detect element with input is " + s);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Cant detect element with input is " + s);
+                        e.printStackTrace();                    }
                 }
-            }
         }
-
         return result;
     }
 

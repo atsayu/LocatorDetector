@@ -119,5 +119,4 @@ public class HandleElement {
         visited.add(source);
         return 1 + getDistance(source.parent(), target, visited);
     }
-
 }

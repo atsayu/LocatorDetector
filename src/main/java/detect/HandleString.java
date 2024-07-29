@@ -80,4 +80,15 @@ public class HandleString {
         }
     }
 
+    public static List<String> describedLocator (String input) {
+        List<String> listDescribeLocator = new ArrayList<>();
+        List<String> separateWords = separateWordsInString(input);
+        for (String s : separateWords) {
+            if (!Setting.STOP_WORDS.contains(s) && !Setting.HEURISTIC_STOP_WORDS.contains(s)) {
+                listDescribeLocator.add(s.toLowerCase());
+            }
+        }
+        return listDescribeLocator;
+    }
+
 }

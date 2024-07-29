@@ -150,7 +150,6 @@ public class Process {
         Elements clickableElements = HandleClick.getClickableElements(document);
         boolean isAfterHoverAction = false;
         List<Action> visited = new ArrayList<>();
-        Map<String, List<Action>> map = new HashMap<>(); //saves actions that needed to  be currently detected
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i) instanceof AssertURL) {
                 if (i != list.size() - 1) {
@@ -177,7 +176,6 @@ public class Process {
                     String text_locator = list.get(i).getText_locator();
                     List<String> input = Arrays.asList(text_locator);
                     Map<String, List<Element>> res = InputElement.detectInputElement(input, inputElements, isAfterHoverAction);
-
                     List<Element> elements = res.get(text_locator);
                     List<Element> elementList = new ArrayList<>();
                     WebDriver driver = new ChromeDriver();
@@ -310,7 +308,8 @@ public class Process {
                 if (list.get(i) instanceof ClickCheckboxAction) {
                     ClickCheckboxAction checkboxAction = (ClickCheckboxAction) list.get(i);
                     String choice = checkboxAction.getChoice();
-                    Pair<String, String> pair = new Pair("", choice);
+                    String question = checkboxAction.getQuestion();
+                    Pair<String, String> pair = new Pair(question, choice);
                     Element checkbox = Checkbox.detectCheckboxElement(pair, document);
                     isAfterHoverAction = false;
                     String locator = Process.getAbsoluteXpath(checkbox, "");
@@ -340,6 +339,261 @@ public class Process {
         }
         return list;
     }
+
+    public static int detectLocatorsV2(List<Action> list, String url) {
+        int index_action = 0;
+        WebDriver driver = new ChromeDriver();
+        driver.get(url);
+        String htmlContent = driver.getPageSource();
+        Element previousElement = null;
+        Document document = getDomTree(htmlContent);
+        Elements inputElements = HandleInput.getInputElements(document);
+        Elements selectElements = HandleSelect.getSelectElements(document);
+        Elements clickableElements = HandleClick.getClickableElements(document);
+        boolean isAfterHoverAction = false;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) instanceof AssertURL) {
+                if (i != list.size() - 1) {
+                    String pageSource = driver.getPageSource();
+                    document = getDomTree(pageSource);
+                    inputElements = HandleInput.getInputElements(document);
+                    selectElements = HandleSelect.getSelectElements(document);
+                    clickableElements = HandleClick.getClickableElements(document);
+                }
+                isAfterHoverAction = false;
+                previousElement = null;
+                index_action++;
+            } else {
+                if (list.get(i) instanceof InputAction) {
+                    String text_locator = list.get(i).getText_locator();
+                    List<String> input = Arrays.asList(text_locator);
+                    Map<String, List<Element>> res = InputElement.detectInputElement(input, inputElements, isAfterHoverAction);
+                    if (res.isEmpty()) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    }
+                    List<Element> elements = res.get(text_locator);
+                    List<Element> elementList = new ArrayList<>();
+                    if (elements.isEmpty()) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    }
+                    for (Element e : elements) {
+                        String xpath = Process.getAbsoluteXpath(e, "");
+                        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+                        if (driver.findElement(By.xpath(xpath)).isDisplayed()) {
+                            elementList.add(e);
+                        }
+                    }
+                    if (elementList.isEmpty()) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    } else {
+                        if (elementList.size() == 1) {
+                            Element e = elementList.get(0);
+//                        String locator = Process.getXpath(e);
+                            String locator = Process.getAbsoluteXpath(e, "");
+                            System.out.println(locator);
+                            list.get(i).setDom_locator(locator);
+                            previousElement = e;
+                        } else {
+                            if (previousElement != null) {
+                                Element e = HandleElement.findNearestElementWithSpecifiedElement(previousElement, elementList);
+                                String locator = Process.getAbsoluteXpath(e, "");
+                                System.out.println(locator);
+//                        String locator = Process.getXpath(e);
+                                list.get(i).setDom_locator(locator);
+                                previousElement = e;
+                            } else {
+                                Element e = HandleElement.findNearestElementWithSpecifiedElement(document.body(), elementList);
+                                String locator = Process.getAbsoluteXpath(e, "");
+                                System.out.println(locator);
+//                        String locator = Process.getXpath(e);
+                                list.get(i).setDom_locator(locator);
+                                previousElement = e;
+                            }
+
+                        }
+                    }
+                    isAfterHoverAction = false;
+                    index_action++;
+                    list.get(i).run(driver);
+                }
+                if (list.get(i) instanceof ClickAction) {
+                    String text_locator = list.get(i).getText_locator();
+                    List<String> input = Arrays.asList(text_locator);
+                    Map<String, List<Element>> res = Click.detectClickElement(input, clickableElements, isAfterHoverAction);
+                    if (res.isEmpty()) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    }
+                    List<Element> elements = res.get(text_locator);
+                    List<Element> elementList = new ArrayList<>();
+                    if (elements.isEmpty()) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    }
+                    for (Element e : elements) {
+                        String xpath = Process.getAbsoluteXpath(e, "");
+                        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+                        if (driver.findElement(By.xpath(xpath)).isDisplayed()) {
+                            elementList.add(e);
+                        }
+                    }
+                    if (elementList.isEmpty()) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    } else {
+                        if (elementList.size() == 1) {
+                            Element e = elementList.get(0);
+//                        String locator = Process.getXpath(e);
+                            String locator = Process.getAbsoluteXpath(e, "");
+                            System.out.println(locator);
+                            list.get(i).setDom_locator(locator);
+                            previousElement = e;
+                        } else {
+                            if (previousElement != null) {
+                                Element e = HandleElement.findNearestElementWithSpecifiedElement(previousElement, elementList);
+                                String locator = Process.getAbsoluteXpath(e, "");
+                                System.out.println(locator);
+//                        String locator = Process.getXpath(e);
+                                list.get(i).setDom_locator(locator);
+                                previousElement = e;
+                            } else {
+                                Element e = HandleElement.findNearestElementWithSpecifiedElement(document.body(), elementList);
+                                String locator = Process.getAbsoluteXpath(e, "");
+                                System.out.println(locator);
+//                        String locator = Process.getXpath(e);
+                                list.get(i).setDom_locator(locator);
+                                previousElement = e;
+                            }
+                        }
+                    }
+                    isAfterHoverAction = false;
+                    index_action++;
+                    list.get(i).run(driver);
+                }
+                if (list.get(i) instanceof HoverAction) {
+                    String text_locator = list.get(i).getText_locator();
+                    List<String> input = Arrays.asList(text_locator);
+                    Map<String, List<Element>> res = Hover.detectHoverElement(input, clickableElements, isAfterHoverAction);
+                    if (res.isEmpty()) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    }
+                    List<Element> elements = res.get(text_locator);
+                    if (elements.isEmpty()) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    }
+                    List<Element> elementList = new ArrayList<>();
+                    for (Element e : elements) {
+                        String xpath = Process.getAbsoluteXpath(e, "");
+                        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+                        if (driver.findElement(By.xpath(xpath)).isDisplayed()) {
+                            elementList.add(e);
+                        }
+                    }
+                    if (elementList.isEmpty()) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    } else {
+                        if (elementList.size() == 1) {
+                            Element e = elementList.get(0);
+//                        String locator = Process.getXpath(e);
+                            String locator = Process.getAbsoluteXpath(e, "");
+                            System.out.println(locator);
+                            list.get(i).setDom_locator(locator);
+                            previousElement = e;
+                        } else {
+                            if (previousElement != null) {
+                                Element e = HandleElement.findNearestElementWithSpecifiedElement(previousElement, elementList);
+                                String locator = Process.getAbsoluteXpath(e, "");
+                                System.out.println(locator);
+//                        String locator = Process.getXpath(e);
+                                list.get(i).setDom_locator(locator);
+                                previousElement = e;
+                            } else {
+                                Element e = HandleElement.findNearestElementWithSpecifiedElement(document.body(), elementList);
+                                String locator = Process.getAbsoluteXpath(e, "");
+                                System.out.println(locator);
+//                        String locator = Process.getXpath(e);
+                                list.get(i).setDom_locator(locator);
+                                previousElement = e;
+                            }
+                        }
+                    }
+                    isAfterHoverAction = true;
+                    index_action++;
+                    list.get(i).run(driver);
+                }
+                if (list.get(i) instanceof ClickCheckboxAction) {
+                    ClickCheckboxAction checkboxAction = (ClickCheckboxAction) list.get(i);
+                    String choice = checkboxAction.getChoice();
+                    String question = checkboxAction.getQuestion();
+                    Pair<String, String> pair = new Pair(question, choice);
+                    Element checkbox = Checkbox.detectCheckboxElement(pair, document);
+                    if (checkbox == null) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    }
+                    isAfterHoverAction = false;
+                    String locator = Process.getAbsoluteXpath(checkbox, "");
+                    System.out.println(locator);
+                    list.get(i).setDom_locator(locator);
+//                    list.get(i).setDom_locator(Process.getXpath(checkbox));
+                    previousElement = checkbox;
+                    index_action++;
+                    list.get(i).run(driver);
+                }
+                if (list.get(i) instanceof SelectAction) {
+                    SelectAction selectAction = (SelectAction) list.get(i);
+                    String question = selectAction.getQuestion();
+                    String choice = selectAction.getChoice();
+                    Pair<String, String> pair = new Pair<>(question, choice);
+                    List<Pair<String, String>> list_pair = new ArrayList<>();
+                    list_pair.add(pair);
+                    Map<Pair<String, String>, Element> res = Select.detectSelectElement(list_pair, selectElements);
+                    if (res.isEmpty()) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    }
+                    Element select = res.get(pair);
+                    if (select == null) {
+                        System.out.println("Cant detect element in action " + index_action);
+                        driver.quit();
+                        return index_action;
+                    }
+                    previousElement = select;
+                    isAfterHoverAction = false;
+                    String locator = Process.getAbsoluteXpath(select, "");
+                    System.out.println(locator);
+                    list.get(i).setDom_locator(locator);
+//                    list.get(i).setDom_locator(Process.getXpath(select));
+                    index_action++;
+                    list.get(i).run(driver);
+                }
+            }
+        }
+        driver.quit();
+        return index_action;
+    }
+
+
     public static String getHtmlContent(String linkHtml) {
         WebDriver driver = new ChromeDriver();
         driver.get(linkHtml);
@@ -780,8 +1034,9 @@ public class Process {
         Pair<String, List<Action>> res = parseJson("src/main/resources/testcase/sample_saucedemo.json");
         String url = res.getFirst();
         List<Action> actions = res.getSecond();
-        List<Action> result = detectLocators(actions, url);
-        for (Action action : result) {
+        int index = detectLocatorsV2(actions, url);
+        System.out.println(index);
+        for (Action action : actions) {
             System.out.println(action.getDom_locator());
         }
     }

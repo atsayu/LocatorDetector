@@ -1,23 +1,19 @@
 package detect.ver2;
-
 import detect.*;
 import detect.Process;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-
 import java.util.*;
+import static detect.word2vec.Word2Vec.convertDataToJsonFormat;
+import static detect.word2vec.Word2Vec.invokePythonProcess;
 
 public class Click {
     public static Map<String, List<Element>> detectClickElement(List<String> input, Elements clickableElements, boolean isAfterHoverAction) {
         Map<String, List<Element>> result = new HashMap<>();
         Map<Weight, List<Weight>> map = new HashMap<>();
+        String s = input.get(0);
         if (!isAfterHoverAction) {
-            for (String s : input) {
                 Weight max = new Weight();
                 for (int i = 0; i < clickableElements.size(); i++) {
                     Element e = clickableElements.get(i);
@@ -57,11 +53,30 @@ public class Click {
                     result.put(s, elementList);
                     System.out.println(max.getFull() + " " + max.getWeight());
                 } else {
-                    System.out.println("Cant detect element with input is " + s);
+                    List<String> describedLocator = HandleString.describedLocator(s);
+                    List<List<String>> describedElements = new ArrayList<>();
+                    for (Element element : clickableElements) {
+                        List<String> describedElement = HandleClick.describedElement(element);
+                        describedElements.add(describedElement);
+                    }
+                    String jsonString = convertDataToJsonFormat(describedLocator, describedElements);
+                    System.out.println(jsonString);
+                    int size = clickableElements.size();
+                    try {
+                        int indexBestMatchElement =invokePythonProcess(jsonString, String.valueOf(size), "E:\\LAB UI\\UITestingLocatorDetector\\src\\main\\java\\detect\\word2vec\\findBestElement.py");
+                        if (indexBestMatchElement != -1) {
+                            List<Element> potentialElements = new ArrayList<>();
+                            potentialElements.add(clickableElements.get(indexBestMatchElement));
+                            result.put(s, potentialElements);
+                        } else {
+                            System.out.println("Cant detect element with input is " + s);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Cant detect element with input is " + s);
+                        e.printStackTrace();
+                    }
                 }
-            }
         } else {
-            for (String s : input) {
                 Weight max = new Weight();
                 for (int i = 0; i < clickableElements.size(); i++) {
                     Element e = clickableElements.get(i);
@@ -102,11 +117,29 @@ public class Click {
                     result.put(s, elementList);
                     System.out.println(max.getFull() + " " + max.getWeight());
                 } else {
-                    System.out.println("Cant detect element with input is " + s);
+                    List<String> describedLocator = HandleString.describedLocator(s);
+                    List<List<String>> describedElements = new ArrayList<>();
+                    for (Element element : clickableElements) {
+                        List<String> describedElement = HandleClick.describedElement(element);
+                        describedElements.add(describedElement);
+                    }
+                    String jsonString = convertDataToJsonFormat(describedLocator, describedElements);
+                    int size = clickableElements.size();
+                    try {
+                        int indexBestMatchElement =invokePythonProcess(jsonString, String.valueOf(size), "E:\\LAB UI\\UITestingLocatorDetector\\src\\main\\java\\detect\\word2vec\\findBestElement.py");
+                        if (indexBestMatchElement != -1) {
+                            List<Element> potentialElements = new ArrayList<>();
+                            potentialElements.add(clickableElements.get(indexBestMatchElement));
+                            result.put(s, potentialElements);
+                        } else {
+                            System.out.println("Cant detect element with input is " + s);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Cant detect element with input is " + s);
+                        e.printStackTrace();
+                    }
                 }
-            }
         }
-
         return result;
     }
 
