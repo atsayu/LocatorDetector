@@ -1,0 +1,81 @@
+{
+  "url": "https://www.saucedemo.com/",
+  "actions": [
+    {
+      "type": "input",
+      "locator": "username",
+      "value": "standard_user"
+
+    },
+    {
+      "type": "input",
+      "locator": "password",
+      "value": "secret_sauce"
+
+    },
+    {
+      "type": "click",
+      "locator": "login_button"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "https://www.saucedemo.com/inventory.html"
+    },
+    {
+      "type": "select",
+      "question": "",
+      "choice": "Name (Z to A)"
+    },
+    {
+      "type": "click",
+      "locator": "Add to cart Sauce Labs Backpack"
+    },
+    {
+      "type": "click",
+      "locator": "shopping_cart"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "https://www.saucedemo.com/cart.html"
+    },
+    {
+      "type": "click",
+      "locator": "checkout"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "https://www.saucedemo.com/checkout-step-one.html"
+    },
+    {
+      "type": "input",
+      "locator": "first_name",
+      "value": "bui the"
+    },
+    {
+      "type": "input",
+      "locator": "last_name",
+      "value": "cong"
+    },
+    {
+      "type": "input",
+      "locator": "zip or postal code",
+      "value": "123"
+    },
+    {
+      "type": "click",
+      "locator": "continue"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "https://www.saucedemo.com/checkout-step-two.html"
+    },
+    {
+      "type": "click",
+      "locator": "cancel"
+    },
+    {
+      "type": "assertUrl",
+      "expectedUrl": "https://www.saucedemo.com/inventory.html"
+    }
+  ]
+}

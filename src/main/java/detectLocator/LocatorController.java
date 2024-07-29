@@ -66,8 +66,10 @@ public class LocatorController {
             }
             Pair<String, List<Action>> pair = Process.parseJson2(jsonTestCase);
             System.out.println(url);
-            List<Action> detectedLocatorActions = Process.detectLocators(list, url);
-            for (Action action: detectedLocatorActions) {
+//            List<Action> detectedLocatorActions = Process.detectLocators(list, url);
+            //TODO
+            int index = Process.detectLocatorsV2(list, url);
+            for (Action action: list) {
                 if (!(action instanceof ClickCheckboxAction) && !(action instanceof SelectAction)) {
                     if (action.getText_locator() != null && !response.containsKey(action.getText_locator())) {
                         response.put(action.getText_locator(), action.getDom_locator());
