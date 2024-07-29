@@ -46,7 +46,7 @@ public class LocatorController {
                     list.add(act);
                 }
                 if (type.equals("select")) {
-                    String question = (String) actionObject .get("question");
+                    String question = (String) actionObject.get("question");
                     String choice = (String) actionObject.get("answer");
                     Action act = new SelectAction(question, choice);
                     list.add(act);

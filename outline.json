@@ -1,0 +1,26 @@
+{
+  "actions": [
+    {
+      "type": "input",
+      "describedLocator": "username",
+      "value": "standard_user"
+    },
+    {
+      "type": "input",
+      "describedLocator": "password",
+      "value": "secret_sauce"
+    },
+    {
+      "type": "click",
+      "describedLocator": "login"
+    },
+    {
+      "type": "click",
+      "describedLocator": "menu"
+    },
+    {
+      "type": "click",
+      "describedLocator": "logout"
+    }
+  ]
+}
