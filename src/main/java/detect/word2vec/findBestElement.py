@@ -22,9 +22,10 @@ def findBestMatchElement(model, jsonObject, size):
     return index
 
 if __name__ == "__main__":
-    path = r'E:\LAB UI\UITestingLocatorDetector\src\main\resources\GoogleNews-vectors-negative300.bin'
-    model = KeyedVectors.load_word2vec_format(path, binary=True)
-    model.save("word2vec.model")
+    # path = r'E:\LAB UI\UITestingLocatorDetector\src\main\resources\GoogleNews-vectors-negative300.bin'
+    # model = KeyedVectors.load_word2vec_format(path, binary=True)
+    # model.save("word2vec.model")
+    model = KeyedVectors.load("word2vec.model", mmap='r')
     jsonString = os.environ["JSON_DATA"]
     # print(jsonString)
     size = sys.argv[1]
@@ -32,3 +33,4 @@ if __name__ == "__main__":
     jsonObject = json.loads(jsonString)
     result = findBestMatchElement(model, jsonObject, int(size))
     print(result)
+    
