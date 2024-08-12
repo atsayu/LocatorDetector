@@ -733,6 +733,11 @@ public class Process {
                     isAfterHoverAction = false;
                     index_action++;
                     list.get(i).run(driver);
+                    String pageSource = driver.getPageSource();
+                    document = getDomTree(pageSource);
+                    inputElements = HandleInput.getInputElements(document);
+                    selectElements = HandleSelect.getSelectElements(document);
+                    clickableElements = HandleClick.getClickableElements(document);
                 }
                 if (list.get(i) instanceof ClickAction) {
                     String text_locator = list.get(i).getText_locator();
@@ -752,7 +757,7 @@ public class Process {
                     }
                     for (Element e : elements) {
                         String xpath = Process.getAbsoluteXpath(e, "");
-                        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(10));
                         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
                         if (driver.findElement(By.xpath(xpath)).isDisplayed()) {
                             elementList.add(e);
@@ -791,6 +796,11 @@ public class Process {
                     isAfterHoverAction = false;
                     index_action++;
                     list.get(i).run(driver);
+                    String pageSource = driver.getPageSource();
+                    document = getDomTree(pageSource);
+                    inputElements = HandleInput.getInputElements(document);
+                    selectElements = HandleSelect.getSelectElements(document);
+                    clickableElements = HandleClick.getClickableElements(document);
                 }
                 if (list.get(i) instanceof HoverAction) {
                     String text_locator = list.get(i).getText_locator();
@@ -849,6 +859,11 @@ public class Process {
                     isAfterHoverAction = true;
                     index_action++;
                     list.get(i).run(driver);
+                    String pageSource = driver.getPageSource();
+                    document = getDomTree(pageSource);
+                    inputElements = HandleInput.getInputElements(document);
+                    selectElements = HandleSelect.getSelectElements(document);
+                    clickableElements = HandleClick.getClickableElements(document);
                 }
                 if (list.get(i) instanceof ClickCheckboxAction) {
                     ClickCheckboxAction checkboxAction = (ClickCheckboxAction) list.get(i);
@@ -869,6 +884,11 @@ public class Process {
                     previousElement = checkbox;
                     index_action++;
                     list.get(i).run(driver);
+                    String pageSource = driver.getPageSource();
+                    document = getDomTree(pageSource);
+                    inputElements = HandleInput.getInputElements(document);
+                    selectElements = HandleSelect.getSelectElements(document);
+                    clickableElements = HandleClick.getClickableElements(document);
                 }
                 if (list.get(i) instanceof SelectAction) {
                     SelectAction selectAction = (SelectAction) list.get(i);
@@ -897,6 +917,11 @@ public class Process {
 //                    list.get(i).setDom_locator(Process.getXpath(select));
                     index_action++;
                     list.get(i).run(driver);
+                    String pageSource = driver.getPageSource();
+                    document = getDomTree(pageSource);
+                    inputElements = HandleInput.getInputElements(document);
+                    selectElements = HandleSelect.getSelectElements(document);
+                    clickableElements = HandleClick.getClickableElements(document);
                 }
             }
         }
@@ -1030,7 +1055,7 @@ public class Process {
         return result;
     }
     public static void main(String[] args) {
-        Pair<String, List<Action>> res = parseJson("src/main/resources/testcase/sample.json");
+        Pair<String, List<Action>> res = parseJson("src/main/resources/testcase/payment_saucedemo.json");
         String url = res.getFirst();
         List<Action> actions = res.getSecond();
         int index = detectLocatorsV2(actions, url);
